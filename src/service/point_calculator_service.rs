@@ -20,23 +20,19 @@ impl PointCalculatorService {
             .find(|p| p.id() == player_id)
             .unwrap();
 
-        let player_team_plays_in_match = |m| {
-            m.get_home_team().get_id() == player.team_id()
-                || m.get_away_team().get_id() == player.team_id()
-        };
-
-        let match_events_for_player = |m| {
-            m.get_match_events()
-                .iter()
-                .filter(|me| me.get_player().id() == player.id())
-        };
-
         let relevant_match_events = self
             .client
             .get_matches(Some(game_week))
             .iter()
-            .filter(player_team_plays_in_match)
-            .flat_map(match_events_for_player)
+            .filter(|m| {
+                m.get_home_team().get_id() == player.team_id()
+                    || m.get_away_team().get_id() == player.team_id()
+            })
+            .flat_map(|m| {
+                m.get_match_events()
+                    .iter()
+                    .filter(|me| me.get_player().id() == player.id())
+            })
             .collect();
 
         return PointCalculatorService::points_for_player_in_match_events(
