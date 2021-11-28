@@ -15,25 +15,19 @@ pub struct LocalFootballStatsClient<'a> {
 
 impl LocalFootballStatsClient<'_> {
     pub fn new() -> LocalFootballStatsClient<'static> {
-        let teams = (0..20)
-            .map(|i| create_team_with_players(None, None, i))
-            .collect();
-        LocalFootballStatsClient {
-            teams,
-            matches: Vec::new(),
-        }
+        todo!();
     }
 }
 
 impl FootballStatsClient for LocalFootballStatsClient<'_> {
     fn get_matches(&self, game_week: Option<u8>) -> Vec<&FootballMatch> {
         return match game_week {
-            None => self.matches.iter().map(|m| *m).collect(),
+            None => self.matches.iter().copied().collect(),
             Some(game_week) => self
                 .matches
                 .iter()
                 .filter(|m| m.get_game_week() == game_week)
-                .map(|m| *m)
+                .copied()
                 .collect(),
         };
     }
@@ -78,7 +72,7 @@ pub fn create_team_with_players(
 
     let goalkeeper = Player::new(
         format!("Goalkeeper Keeperson"),
-        Position::GK,
+        Position::Gk,
         id,
         rng.next_u32(),
     );
@@ -88,7 +82,7 @@ pub fn create_team_with_players(
         let first_name = first_names.choose(&mut rng).unwrap();
         let sur_name = sur_names.choose(&mut rng).unwrap();
         let full_name = format!("{} {}", first_name, sur_name);
-        let player = Player::new(full_name, Position::DEF, id, rng.next_u32());
+        let player = Player::new(full_name, Position::Def, id, rng.next_u32());
         generated_players.insert(player);
     });
 
@@ -96,7 +90,7 @@ pub fn create_team_with_players(
         let first_name = first_names.choose(&mut rng).unwrap();
         let sur_name = sur_names.choose(&mut rng).unwrap();
         let full_name = format!("{} {}", first_name, sur_name);
-        let player = Player::new(full_name, Position::MID, id, rng.next_u32());
+        let player = Player::new(full_name, Position::Mid, id, rng.next_u32());
         generated_players.insert(player);
     });
 
@@ -104,7 +98,7 @@ pub fn create_team_with_players(
         let first_name = first_names.choose(&mut rng).unwrap();
         let sur_name = sur_names.choose(&mut rng).unwrap();
         let full_name = format!("{} {}", first_name, sur_name);
-        let player = Player::new(full_name, Position::FWD, id, rng.next_u32());
+        let player = Player::new(full_name, Position::Fwd, id, rng.next_u32());
         generated_players.insert(player);
     });
 

@@ -1,5 +1,5 @@
 use crate::client::client::FootballStatsClient;
-use crate::models::football_match::FootballMatch;
+
 use crate::models::match_event::{MatchEvent, MatchEventType};
 use crate::models::player::{Player, Position};
 
@@ -9,7 +9,7 @@ pub struct PointCalculatorService {
 
 impl PointCalculatorService {
     pub fn new(client: Box<dyn FootballStatsClient>) -> Box<PointCalculatorService> {
-        return Box::new(PointCalculatorService { client });
+        Box::new(PointCalculatorService { client })
     }
 
     pub fn points_for_player_in_gw(&self, player_id: u32, game_week: u8) -> Option<i8> {
@@ -35,10 +35,7 @@ impl PointCalculatorService {
             })
             .collect();
 
-        return PointCalculatorService::points_for_player_in_match_events(
-            relevant_match_events,
-            player,
-        );
+        PointCalculatorService::points_for_player_in_match_events(relevant_match_events, player)
     }
 
     fn points_for_player_in_match_events(
@@ -50,74 +47,74 @@ impl PointCalculatorService {
                 return acc;
             }
             let points = PointCalculatorService::points_for_position(me, player.position());
-            return match acc {
+            match acc {
                 None => Option::Some(points),
                 Some(acc_points) => Option::Some(acc_points + points),
-            };
+            }
         });
     }
 
     fn points_for_position(match_event: &MatchEvent, position: Position) -> i8 {
-        return match position {
-            Position::GK => PointCalculatorService::points_for_goalkeeper(match_event.get_type()),
-            Position::DEF => PointCalculatorService::points_for_defender(match_event.get_type()),
-            Position::MID => PointCalculatorService::points_for_midfielder(match_event.get_type()),
-            Position::FWD => PointCalculatorService::points_for_forward(match_event.get_type()),
-        };
+        match position {
+            Position::Gk => PointCalculatorService::points_for_goalkeeper(match_event.get_type()),
+            Position::Def => PointCalculatorService::points_for_defender(match_event.get_type()),
+            Position::Mid => PointCalculatorService::points_for_midfielder(match_event.get_type()),
+            Position::Fwd => PointCalculatorService::points_for_forward(match_event.get_type()),
+        }
     }
 
     fn points_for_goalkeeper(match_event_type: MatchEventType) -> i8 {
-        return match match_event_type {
+        match match_event_type {
             MatchEventType::Goal => 6,
             MatchEventType::Assist => 3,
             MatchEventType::Save => 1,
             MatchEventType::RedCard => -3,
             MatchEventType::YellowCard => -1,
-        };
+        }
     }
 
     fn points_for_defender(match_event_type: MatchEventType) -> i8 {
-        return match match_event_type {
+        match match_event_type {
             MatchEventType::Goal => 6,
             MatchEventType::Assist => 3,
             MatchEventType::Save => 0,
             MatchEventType::RedCard => -3,
             MatchEventType::YellowCard => -1,
-        };
+        }
     }
 
     fn points_for_midfielder(match_event_type: MatchEventType) -> i8 {
-        return match match_event_type {
+        match match_event_type {
             MatchEventType::Goal => 5,
             MatchEventType::Assist => 3,
             MatchEventType::Save => 0,
             MatchEventType::RedCard => -3,
             MatchEventType::YellowCard => -1,
-        };
+        }
     }
 
     fn points_for_forward(match_event_type: MatchEventType) -> i8 {
-        return match match_event_type {
+        match match_event_type {
             MatchEventType::Goal => 4,
             MatchEventType::Assist => 3,
             MatchEventType::Save => 0,
             MatchEventType::RedCard => -3,
             MatchEventType::YellowCard => -1,
-        };
+        }
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::models::football_match::FootballMatch;
+
     use crate::models::match_event::{MatchEvent, MatchEventType};
     use crate::models::player::{Player, Position};
     use crate::PointCalculatorService;
 
     #[test]
     fn two_players_only_get_points_for_their_own_actions() {
-        let player1 = Player::new(String::from("Marcus"), Position::FWD, 1, 1);
-        let player2 = Player::new(String::from("William"), Position::MID, 1, 2);
+        let player1 = Player::new(String::from("Marcus"), Position::Fwd, 1, 1);
+        let player2 = Player::new(String::from("William"), Position::Mid, 1, 2);
         let match_events = vec![
             MatchEvent::new(MatchEventType::Goal, 15, &player1),
             MatchEvent::new(MatchEventType::Assist, 15, &player2),
@@ -140,7 +137,7 @@ mod tests {
     #[test]
     fn player_without_match_events_get_none() {
         let events: Vec<MatchEvent> = vec![];
-        let player = Player::new(String::from("Marcus"), Position::FWD, 1, 1);
+        let player = Player::new(String::from("Marcus"), Position::Fwd, 1, 1);
 
         let points = PointCalculatorService::points_for_player_in_match_events(
             events.iter().collect(),
@@ -152,7 +149,7 @@ mod tests {
 
     #[test]
     fn player_with_negative_actions_get_minus_points() {
-        let player = Player::new(String::from("Marcus"), Position::FWD, 1, 1);
+        let player = Player::new(String::from("Marcus"), Position::Fwd, 1, 1);
         let events = vec![MatchEvent::new(MatchEventType::RedCard, 15, &player)];
 
         let points = PointCalculatorService::points_for_player_in_match_events(

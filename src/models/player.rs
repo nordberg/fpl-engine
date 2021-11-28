@@ -1,9 +1,9 @@
 #[derive(Clone, Copy, Eq, PartialEq, Hash)]
 pub enum Position {
-    GK,
-    DEF,
-    MID,
-    FWD,
+    Gk,
+    Def,
+    Mid,
+    Fwd,
 }
 
 #[derive(Clone, Eq, PartialEq, Hash)]
@@ -25,14 +25,14 @@ impl Player {
     }
 
     pub fn team_id(&self) -> u32 {
-        return self.team_id;
+        self.team_id
     }
 
     pub fn position(&self) -> Position {
-        return self.position;
+        self.position
     }
 
     pub fn id(&self) -> u32 {
-        return self.id;
+        self.id
     }
 }

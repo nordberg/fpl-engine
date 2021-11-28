@@ -24,18 +24,18 @@ impl FootballMatch<'_> {
     }
 
     pub fn get_game_week(&self) -> u8 {
-        return self.game_week;
+        self.game_week
     }
 
     pub fn get_home_team(&self) -> &PlayingTeam {
-        return &self.home_team;
+        &self.home_team
     }
 
     pub fn get_away_team(&self) -> &PlayingTeam {
-        return &self.away_team;
+        &self.away_team
     }
 
     pub fn get_match_events(&self) -> &[MatchEvent<'_>] {
-        return self.match_events.as_slice();
+        self.match_events.as_slice()
     }
 }

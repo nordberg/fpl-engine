@@ -26,11 +26,11 @@ impl MatchEvent<'_> {
     }
 
     pub fn get_player(&self) -> &Player {
-        return &self.player;
+        &self.player
     }
 
     pub fn get_type(&self) -> MatchEventType {
-        return self.event_type;
+        self.event_type
     }
 }
 
